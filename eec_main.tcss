@@ -1,0 +1,28 @@
+
+Button {
+    width: 16;
+}
+
+#ivt_table {
+    border: round $accent;
+}
+#battery_table {
+    border: round $accent;
+}
+
+#relay_view {
+    border: round $accent;
+}
+
+#relay_grid {
+    grid-size: 10;
+    grid-rows: auto;
+    grid-columns: 1fr;
+    grid-gutter: 1;
+}
+
+.switch_label {
+    height: 3;
+    content-align: center middle;
+    width: auto;
+}
