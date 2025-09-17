@@ -54,7 +54,7 @@ class BatteryTable(DataTable):
 
     @on(DataTable.RowSelected)
     async def on_click_row(self, *args) -> None:
-        res = await fetch(f'{BASE_URL}/bms/sw/{self.table[args[0].cursor_row]['index']}/{self.table[args[0].cursor_row]['switch'] ^ 1}')
+        res = await fetch(f'{BASE_URL}/bms/sw/{self.table[args[0].cursor_row]["index"]}/{self.table[args[0].cursor_row]["switch"] ^ 1}')
         print(res)
 
 class RelayTable(DataTable):
@@ -82,7 +82,7 @@ class RelayTable(DataTable):
 
     @on(DataTable.RowSelected)
     async def on_click_row(self, *args) -> None:
-        res = await fetch(f'{BASE_URL}/main/sw/{self.table[args[0].cursor_row]['name']}/{self.table[args[0].cursor_row]['status'] ^ 1}')
+        res = await fetch(f'{BASE_URL}/main/sw/{self.table[args[0].cursor_row]["name"]}/{self.table[args[0].cursor_row]["status"] ^ 1}')
         print(res)
 
 
