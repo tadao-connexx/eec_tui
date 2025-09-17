@@ -10,19 +10,24 @@ Button {
     border: round $accent;
 }
 
-#relay_view {
+#acdc_table {
     border: round $accent;
 }
 
 #relay_grid {
-    grid-size: 10;
-    grid-rows: auto;
+    grid-size: 12 4;
+    grid-rows: 3;
     grid-columns: 1fr;
     grid-gutter: 1;
+    border: round $accent;
 }
 
 .switch_label {
     height: 3;
     content-align: center middle;
     width: auto;
+}
+
+CheckBox {
+    height: 1;
 }

@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Footer, Header, Button, Digits, DataTable, TabPane, TabbedContent, Static, Switch
+from textual.widgets import Footer, Header, Button, Digits, DataTable, TabPane, TabbedContent, Static, Switch, Checkbox
 from textual.widget import Widget
 from textual.containers import Grid
 from textual.reactive import reactive
@@ -49,14 +49,32 @@ class BatteryTable(DataTable):
         if len(table) > 0:
             self.add_rows([tuple(d[k] for k in self.keys) for d in table])
 
+class PsuTable(DataTable):
+    table = reactive([])
+    keys = ('line_voltage', 'output_voltage', 'output_current', 'output_ref_volt', 'current_limit', 'temperature', 'status')
+
+    def on_mount(self) -> None:
+        self.add_columns(*self.keys)
+        self.cursor_type = "row"
+
+    def watch_table(self, table):
+        self.clear()
+        if len(table) > 0:
+            flattened_table = []
+            for i in range(len(table)):
+                table2 = [table[i][k] for k in self.keys]
+                # flattened_table.extend(zip(*table2))
+                self.add_rows(tuple(zip(*table2)))
+            # self.add_rows(flattened_table)
+
+
 class RelaySwitch(Switch):
     async def on_click(self) -> None:
         res = await fetch(f'{BASE_URL}/main/sw/{self.id}/{int(not self.value)}')
-        print(res)
 
 class RelayView(Widget):
     relays = reactive([])
-    acdc = reactive([])
+    acdc = PsuTable(id="acdc_table")
 
     def on_mount(self) -> None:
         self.set_interval(1, self.update_data)
@@ -65,10 +83,10 @@ class RelayView(Widget):
         response = await fetch(f'{BASE_URL}/main/status')
         if response and response['status'] == 'OK':
             self.relays = response['value']['switches']
-            self.acdc = response['value']['ACDC']
+            self.acdc.table = response['value']['ACDC']
         else:
             self.relays = [{}]
-            self.acdc = [{}]
+            self.acdc.table = []
         await self.recompose()
 
     def compose(self) -> ComposeResult:
@@ -76,9 +94,7 @@ class RelayView(Widget):
             for relay in self.relays:
                 yield Static(relay['name'], classes="switch_label")
                 yield RelaySwitch(id=relay['name'], value=relay['status'])
-
-    # async def watch_relays(self, relays):
-    #     await self.recompose()
+        yield self.acdc
 
 class EecTui(App):
 
