@@ -3,6 +3,10 @@ Button {
     width: 16;
 }
 
+Input {
+    width: 16;
+}
+
 #ivt_table {
     border: round $accent;
 }
@@ -15,5 +19,9 @@ Button {
 }
 
 #relay_table {
+    border: round $accent;
+}
+
+#label_dc24 {
     border: round $accent;
 }

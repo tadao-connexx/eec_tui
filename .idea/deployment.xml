@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="cnx@ctl:22 agent (6)" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
       <paths name="cnx@bms1:22 agent">
         <serverdata>
@@ -65,6 +65,13 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="cnx@ctl:22 agent (6)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/cnx/dev/eec_tui" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="ctl fuso_be">
         <serverdata>
           <mappings>
@@ -73,5 +80,6 @@
         </serverdata>
       </paths>
     </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
   </component>
 </project>

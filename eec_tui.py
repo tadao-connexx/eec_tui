@@ -2,7 +2,7 @@ from typing import Iterable
 from textual import events, on
 from textual.app import App, ComposeResult, SystemCommand
 from textual.screen import Screen
-from textual.widgets import Footer, Header, Button, DataTable, TabPane, TabbedContent, Input
+from textual.widgets import Footer, Header, Button, DataTable, TabPane, TabbedContent, Input, Label
 from textual.reactive import reactive
 from web_request import fetch, post
 
@@ -90,6 +90,7 @@ class PsuTable(DataTable):
     table = reactive({})
     keys = ('type', 'id', 'line_voltage', 'output_voltage', 'output_current', 'output_ref_volt', 'current_limit', 'temperature', 'status')
     column_name = ('Type', 'ID', 'In(V)', 'Out(V)', 'Out(A)', 'Target(V)', 'Limit(A)', 'Temp(C)', 'Status')
+    dc24_label: Label|None = None
 
     def on_mount(self) -> None:
         self.set_interval(1, self.update_table)
@@ -117,6 +118,8 @@ class PsuTable(DataTable):
             self.add_rows(self.get_flattened_table(table['ACDC']))
         if table and table.get('DCDC', None):
             self.add_rows(self.get_flattened_table(table['DCDC']))
+        if table:
+            self.dc24_label.content = f"24V DC/DC: {table.get('DC24', 'unknown status')}"
 
 class PsuButton(Button):
     voltage: Input|None = None
@@ -147,11 +150,18 @@ class EecTui(App):
     input_current = Input(placeholder="Current")
     psu_off = PsuButton("OFF", id='psu_off', variant='error')
     psu_on = PsuButton("ON", id='psu_on', variant='success')
+    psu_table = PsuTable(id="psu_table")
+    dc24_label = Label(id='label_dc24')
 
-    def compose(self) -> ComposeResult:
+    def on_mount(self) -> None:
+        self.title = "EnePOND\u00AE EV Charger Control Center"
+        self.sub_title = "2025 CONNEXX SYSTEMS"
         self.psu_on.voltage = self.input_voltage
         self.psu_on.current = self.input_current
-        yield Header()
+        self.psu_table.dc24_label = self.dc24_label
+
+    def compose(self) -> ComposeResult:
+        yield Header(show_clock=True)
         yield Footer()
         with TabbedContent():
             with TabPane("Battery", id='battery_tab'):
@@ -160,7 +170,8 @@ class EecTui(App):
             with TabPane("Relays", id='relay_tab'):
                 yield RelayTable(id="relay_table")
             with TabPane("PSU", id='psu_tab'):
-                yield PsuTable(id="psu_table")
+                yield self.psu_table
+                yield self.dc24_label
                 yield self.input_voltage
                 yield self.input_current
                 yield self.psu_on
